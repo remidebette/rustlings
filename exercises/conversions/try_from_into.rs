@@ -2,7 +2,7 @@
 // Basically, this is the same as From. The main difference is that this should return a Result type
 // instead of the target type itself.
 // You can read more about it at https://doc.rust-lang.org/std/convert/trait.TryFrom.html
-use std::convert::{TryInto, TryFrom};
+use std::convert::{TryFrom, TryInto};
 
 #[derive(Debug)]
 struct Color {
@@ -10,8 +10,6 @@ struct Color {
     green: u8,
     blue: u8,
 }
-
-// I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -22,10 +20,23 @@ struct Color {
 // but slice implementation need check slice length!
 // Also note, that chunk of correct rgb color must be integer in range 0..=255.
 
+fn u8_or_panic(inp: i16) -> u8 {
+    if inp < 0 || inp > 255 {
+        panic!("A color should be a valid u8.")
+    }
+
+    inp as u8
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        Ok(Color {
+            red: u8_or_panic(tuple.0),
+            green: u8_or_panic(tuple.1),
+            blue: u8_or_panic(tuple.2),
+        })
     }
 }
 
@@ -33,6 +44,11 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        Ok(Color {
+            red: u8_or_panic(arr[0]),
+            green: u8_or_panic(arr[1]),
+            blue: u8_or_panic(arr[2]),
+        })
     }
 }
 
@@ -40,6 +56,15 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = String;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            panic!("Slice size should be 3.")
+        }
+
+        Ok(Color {
+            red: u8_or_panic(slice[0]),
+            green: u8_or_panic(slice[1]),
+            blue: u8_or_panic(slice[2]),
+        })
     }
 }
 
